@@ -1,0 +1,141 @@
+@import 'tailwindcss/base.css';
+@import 'tailwindcss/components.css';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  body {
+    background: linear-gradient(to bottom right, #F9FAFB, #F3F4F6);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .game-card {
+    transform: transform;
+    transition: all 300ms;
+}
+.game-card:hover {
+    transform: scale(1.05) translateY(-0.25rem);
+  }
+  
+  .game-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.75rem;
+    opacity: 0;
+    transition: opacity 300ms;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+  
+  .game-card:hover::after {
+    opacity: 1;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 1rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #D1D5DB;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px #6366F1;
+  }
+  
+  .btn-primary {
+    background-color: #4F46E5;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    font-weight: 500;
+           &:hover { background-color: #4338CA; }
+           &:active { background-color: #3730A3; }
+           transform: transition-all duration-300;
+           &:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+           &:active { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+           &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+  
+  .btn-secondary {
+    background-color: white;
+    color: #4F46E5;
+    padding: 1.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+           border: border-indigo-200;
+           &:hover { background-color: #EEF2FF; }
+           &:active { background-color: #E0E7FF; }
+           transform: transition-all duration-300;
+           &:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+           &:active { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+  }
+
+  .card {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 300ms;
+  }
+
+  .section-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1F2937;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    color: #4B5563;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border: 2px solid theme('colors.indigo.500');
+}
+
+.dark {
+  .card {
+    background-color: #374151;
+    color: #F3F4F6;
+  }
+  
+  .btn-primary {
+    background-color: #4338CA;
+  }
+  
+  .input-field {
+    background-color: #4B5563;
+    border-color: #6B7280;
+    color: #F3F4F6;
+  }
+}
