@@ -1,6 +1,6 @@
 export const ar = {
   common: {
-    selectGame: 'اختر اللعبة',
+    selectGame: 'اختر للشحن',
     chooseAmount: 'اختر المبلغ',
     verify: 'تحقق',
     complete: 'اكتمل',
@@ -8,7 +8,7 @@ export const ar = {
     continue: 'متابعة',
     selectForTopUp: 'اختر لخيارات الشحن',
     howItWorks: 'كيف يعمل',
-    selectGameDesc: 'اختر لعبتك من الخيارات المتاحة',
+    selectGameDesc: 'اختر من العناوين المتاحة للمتابعة',
     chooseAmountDesc: 'اختر مبلغ الشحن المفضل لديك',
     getCodeDesc: 'تحقق واستلم الرمز الرقمي فوراً',
     searchGames: 'ابحث عن الألعاب...',

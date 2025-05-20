@@ -1,6 +1,6 @@
 export const fr = {
   common: {
-    selectGame: 'Sélectionnez le jeu',
+    selectGame: 'Sélectionner pour recharger',
     chooseAmount: 'Choisissez le montant',
     verify: 'Vérifier',
     complete: 'Terminé',
@@ -8,7 +8,7 @@ export const fr = {
     continue: 'Continuer',
     selectForTopUp: 'Sélectionnez pour les options de recharge',
     howItWorks: 'Comment ça marche',
-    selectGameDesc: 'Sélectionnez votre jeu parmi les options disponibles',
+    selectGameDesc: 'Choisissez parmi les titres disponibles pour continuer',
     chooseAmountDesc: 'Sélectionnez votre montant de recharge préféré',
     getCodeDesc: 'Vérifiez et recevez votre code numérique instantanément',
     searchGames: 'Rechercher des jeux...',
