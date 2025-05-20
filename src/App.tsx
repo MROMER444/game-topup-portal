@@ -1,32 +1,39 @@
 import React, { ErrorInfo } from 'react';
-import { TopUpProvider, useTopUp } from './context/TopUpContext';
+import { TopUpProvider } from './context/TopUpContext';
 import { useTheme } from './features/theme/ThemeProvider';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import Header from './components/Header';
 import GameSelection from './pages/GameSelection';
 import TopUpSelection from './pages/TopUpSelection';
 import VerificationFlow from './pages/VerificationFlow';
-import { BrowserRouter } from 'react-router-dom';
+import ConfirmationScreen from './components/ConfirmationScreen';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 const AppContent: React.FC = () => {
-  const { state } = useTopUp();
   const { theme } = useTheme();
+  const { language } = useLanguage();
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'}`}>
+    <div 
+      className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'}`}
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <Header />
       
       <main className="py-6">
-        {state.stage === 'game-selection' && <GameSelection />}
-        {state.stage === 'topup-selection' && <TopUpSelection />}
-        {['msisdn-input', 'otp-verification', 'processing', 'confirmation'].includes(state.stage) && (
-          <VerificationFlow />
-        )}
+        <Routes>
+          <Route path="/" element={<GameSelection />} />
+          <Route path="/topup" element={<TopUpSelection />} />
+          <Route path="/verification" element={<VerificationFlow />} />
+          <Route path="/confirmation" element={<ConfirmationScreen />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
       
       <footer className={`py-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'} text-center`}>
         <div className="container mx-auto px-4">
           <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-            &copy; {new Date().getFullYear()} GameTopUp. All rights reserved.
+            &copy; {new Date().getFullYear()} GameFuel. All rights reserved.
           </p>
           <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'} mt-1`}>
             This is a demo application. No actual purchases are made.
@@ -73,16 +80,18 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 }
 
-function App() {
+const App: React.FC = () => {
   return (
     <BrowserRouter>
       <ErrorBoundary>
+        <LanguageProvider>
         <TopUpProvider>
           <AppContent />
         </TopUpProvider>
+        </LanguageProvider>
       </ErrorBoundary>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

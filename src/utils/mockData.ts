@@ -1,28 +1,34 @@
 import { Game, TopUpOption } from '../types';
 
+// Import game images
+import pubgImage from '../images/pubg.png';
+import freefireImage from '../images/FreeFire.png';
+import rokImage from '../images/RiseofKingdoms.jpg';
+import robloxImage from '../images/Roblox.png';
+
 export const games: Game[] = [
   {
     id: 'pubg',
     name: 'PUBG Mobile',
-    image: 'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: pubgImage,
     color: 'from-yellow-500 to-orange-600'
   },
   {
     id: 'freefire',
     name: 'Free Fire',
-    image: 'https://images.pexels.com/photos/1293261/pexels-photo-1293261.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: freefireImage,
     color: 'from-red-500 to-red-700'
   },
   {
     id: 'rok',
     name: 'Rise of Kingdoms',
-    image: 'https://images.pexels.com/photos/5480787/pexels-photo-5480787.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: rokImage,
     color: 'from-blue-500 to-indigo-700'
   },
   {
     id: 'roblox',
     name: 'Roblox',
-    image: 'https://images.pexels.com/photos/7915437/pexels-photo-7915437.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    image: robloxImage,
     color: 'from-gray-700 to-gray-900'
   }
 ];

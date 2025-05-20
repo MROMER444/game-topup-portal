@@ -1,93 +1,181 @@
-import React, { useEffect, useState } from 'react';
-import { BadgeCheck, Copy, RefreshCcw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTopUp } from '../context/TopUpContext';
+import { useLanguage } from '../context/LanguageContext';
+import { Copy, CheckCircle2, ArrowLeft } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
-interface ConfirmationScreenProps {
-  digitalCode: string;
-  onReset: () => void;
-}
+const ConfirmationScreen: React.FC = () => {
+  const navigate = useNavigate();
+  const { selectedGame, selectedAmount, phoneNumber, digitalCode, generateDigitalCode } = useTopUp();
+  const [isCopied, setIsCopied] = useState(false);
+  const { t } = useLanguage();
 
-const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({ digitalCode, onReset }) => {
-  const { state } = useTopUp();
-  const [copied, setCopied] = useState(false);
+  // Generate digital code when component mounts
+  useEffect(() => {
+    if (!digitalCode) {
+      generateDigitalCode();
+    }
+  }, [digitalCode, generateDigitalCode]);
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(digitalCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopyCode = async () => {
+    if (digitalCode) {
+      try {
+        // Try the modern clipboard API first
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(digitalCode);
+        } else {
+          // Fallback for non-secure contexts
+          const textArea = document.createElement('textarea');
+          textArea.value = digitalCode;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          
+          try {
+            document.execCommand('copy');
+          } catch (err) {
+            console.error('Failed to copy text: ', err);
+          }
+          
+          document.body.removeChild(textArea);
+        }
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+      }
+    }
   };
 
-  // Format digital code for display (add spaces for readability)
-  const formattedCode = digitalCode.split('-').join(' ');
+  const handleBack = () => {
+    navigate('/');
+  };
 
-  // Add confetti effect
+  // Trigger confetti effect when component mounts
   useEffect(() => {
-    const confetti = () => {
-      // This would be implemented with a confetti library
-      console.log('Confetti effect!');
-    };
-    
-    confetti();
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min: number, max: number) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval: any = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+      });
+    }, 250);
+
+    return () => clearInterval(interval);
   }, []);
 
+  // If no game or amount is selected, redirect to home
+  useEffect(() => {
+    if (!selectedGame || !selectedAmount) {
+      navigate('/');
+    }
+  }, [selectedGame, selectedAmount, navigate]);
+
+  if (!selectedGame || !selectedAmount) {
+    return null;
+  }
+
   return (
-    <div className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 max-w-md mx-auto">
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-800 rounded-full text-green-600 dark:text-green-200 mb-4">
-          <BadgeCheck size={42} />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md mx-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+          <div className="flex items-center mb-8">
+            <button
+              onClick={handleBack}
+              className="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              {t('common.back')}
+            </button>
+          </div>
+
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-500" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Purchase Successful!</h2>
-        <p className="text-gray-600 dark:text-gray-300 mt-2">
-          Your {state.selectedGame?.name} top-up code has been generated
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {t('common.purchaseSuccessful')}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              {t('common.codeGenerated', { game: selectedGame.name || '' })}
         </p>
       </div>
       
-      <div className="bg-gray-50 dark:bg-gray-600 rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-500">
-        <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">Your digital code:</p>
-        <div className="flex items-center justify-between">
-          <div className="text-lg font-mono font-bold text-gray-800 dark:text-white tracking-wide break-all">
-            {formattedCode}
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              {t('common.orderSummary')}
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-300">{t('common.game')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{selectedGame.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-300">{t('common.amount')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{selectedAmount.amount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-300">{t('common.price')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {selectedAmount.currency} {selectedAmount.price.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-300">{t('common.phone')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{phoneNumber || '-'}</span>
+              </div>
+            </div>
           </div>
-          <button 
+
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-6">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              {t('common.digitalCode')}
+            </h3>
+            <div 
             onClick={handleCopyCode}
-            className="ml-2 p-2 text-gray-500 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-500 rounded-full transition-colors"
+              className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            {copied ? <BadgeCheck size={20} className="text-green-500" /> : <Copy size={20} />}
+              <span className="font-mono text-lg text-gray-900 dark:text-white">{digitalCode || '-'}</span>
+              <button className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
+                {isCopied ? (
+                  <CheckCircle2 className="w-5 h-5" />
+                ) : (
+                  <Copy className="w-5 h-5" />
+                )}
           </button>
         </div>
-      </div>
-      
-      <div className="bg-indigo-50 dark:bg-indigo-900/30 rounded-lg p-4 mb-6 border border-indigo-100 dark:border-indigo-800">
-        <h3 className="font-bold text-indigo-800 dark:text-indigo-200 mb-2">Order Summary</h3>
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600 dark:text-white">Game:</span>
-          <span className="font-medium text-gray-900 dark:text-white">{state.selectedGame?.name}</span>
+            {isCopied && (
+              <p className="mt-2 text-sm text-green-600 dark:text-green-400">
+                {t('common.codeCopied')}
+              </p>
+            )}
         </div>
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600 dark:text-white">Amount:</span>
-          <span className="font-medium text-gray-900 dark:text-white">{state.selectedTopUp?.amount}</span>
-        </div>
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600 dark:text-white">Price:</span>
-          <span className="font-medium text-gray-900 dark:text-white">{state.selectedTopUp?.currency} {state.selectedTopUp?.price.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600 dark:text-white">Phone:</span>
-          <span className="font-medium text-gray-900 dark:text-white">+{state.msisdn}</span>
         </div>
       </div>
-      
-      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-center">
-        A copy of this code has been sent to your phone via SMS
-      </p>
-      
-      <button
-        onClick={onReset}
-        className="w-full bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-200 py-3 px-4 rounded-lg font-medium hover:bg-indigo-200 dark:hover:bg-indigo-700 transition-colors flex items-center justify-center"
-      >
-        <RefreshCcw size={18} className="mr-2" />
-        <span>Purchase Another Top-Up</span>
-      </button>
     </div>
   );
 };
