@@ -62,7 +62,7 @@ const Header: React.FC = () => {
         >
           <Link to="/" className="flex items-center space-x-2 cursor-pointer">
             <Gamepad2 size={28} />
-            <h1 className="text-xl font-bold">GameFuel</h1>
+            <h1 className="text-xl font-bold">VouchLab</h1>
           </Link>
         </div>
         

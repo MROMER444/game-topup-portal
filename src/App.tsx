@@ -33,7 +33,7 @@ const AppContent: React.FC = () => {
       <footer className={`py-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'} text-center`}>
         <div className="container mx-auto px-4">
           <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-            &copy; {new Date().getFullYear()} GameFuel. All rights reserved.
+            &copy; {new Date().getFullYear()} VouchLab. All rights reserved.
           </p>
           <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'} mt-1`}>
             This is a demo application. No actual purchases are made.
